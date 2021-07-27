@@ -1,5 +1,5 @@
 {
-  "name": "pronko/liqpay-magento2",
+  "name": "ebrook-tw/liqpay-magento2",
   "description": "LiqPay extension for Magento 2 Metapackage",
   "replace": {
     "pronko/liqpay-checkout": "self.version",
