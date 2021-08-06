@@ -40,6 +40,7 @@
                             <label>Payment Action</label>
                             <source_model>Pronko\LiqPayAdmin\Source\PaymentAction</source_model>
                             <config_path>payment/pronko_liqpay/payment_action</config_path>
+                            <comment><![CDATA[If the connection type is Redirect, select Redirect.]]></comment>
                         </field>
                     </group>
                     <group id="pronko_liqpay_account" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="5">
@@ -77,9 +78,18 @@
                         <label>Advanced Settings</label>
                         <attribute type="expanded">0</attribute>
                         <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+                        <field id="redirect_create_invoice" translate="label" type="select" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Redirect Create Invoice</label>
+                            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                            <config_path>payment/pronko_liqpay/redirect_create_invoice</config_path>
+                        </field>
                         <field id="order_prefix" translate="label" type="text" sortOrder="175" showInDefault="1" showInWebsite="1" showInStore="1">
                             <label>Order Prefix</label>
                             <config_path>payment/pronko_liqpay/order_prefix</config_path>
+                        </field>
+                        <field id="order_description" translate="label" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Order Description</label>
+                            <config_path>payment/pronko_liqpay/order_description</config_path>
                         </field>
                     </group>
                  </group>

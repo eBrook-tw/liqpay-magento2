@@ -17,6 +17,7 @@ class PaymentAction implements OptionSourceInterface
     public function toOptionArray()
     {
         return [
+            ['value' => '', 'label' => __('Redirect')],
             ['value' => PaymentActionInterface::AUTHORIZE, 'label' => __('Authorize Only')],
             ['value' => PaymentActionInterface::AUTHORIZE_CAPTURE, 'label' => __('Authorize and Capture')],
         ];

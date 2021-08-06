@@ -15,6 +15,8 @@
                 <allowed_currencies>USD,UAH,RUB,EUR</allowed_currencies>
                 <model>PronkoLiqPayAdapter</model>
                 <connection_type>built_in_form</connection_type>
+                <redirect_create_invoice>0</redirect_create_invoice>
+                <order_description><![CDATA[Purchase of goods in the store. Order #{order_id}.]]></order_description>
                 <can_use_checkout>1</can_use_checkout>
                 <is_gateway>1</is_gateway>
                 <can_authorize>1</can_authorize>

@@ -18,6 +18,7 @@ class Config
     /**#@+
      * Configuration keys
      */
+    const ACTIVE = 'active';
     const PRODUCTION_PUBLIC_KEY = 'production_public_key';
     const PRODUCTION_PRIVATE_KEY = 'production_private_key';
     const SANDBOX_PUBLIC_KEY = 'sandbox_public_key';
@@ -25,6 +26,9 @@ class Config
     const ENVIRONMENT_MODE = 'mode';
     const ORDER_PREFIX = 'order_prefix';
     const ORDER_SUFFIX = 'order_suffix';
+    const ORDER_DESCRIPTION = 'order_description';
+    const REDIRECT_INVOICE = 'redirect_create_invoice';
+
     /**#@-*/
 
     /**
@@ -107,6 +111,15 @@ class Config
     }
 
     /**
+     * @param null $storeId
+     * @return string
+     */
+    public function getOrderDescription($storeId = null): string
+    {
+        return (string) $this->config->getValue(self::ORDER_DESCRIPTION, $storeId);
+    }
+
+    /**
      * @param int|null $storeId
      * @return bool
      */
@@ -116,5 +129,19 @@ class Config
             self::ENVIRONMENT_MODE,
             $storeId
         );
+    }
+
+    public function isEnabled($storeId = null): bool
+    {
+        return  (boolean) $this->config->getValue(self::ACTIVE, $storeId);
+    }
+
+    /**
+     * @param null $storeId
+     * @return bool
+     */
+    public function isCreateInvoice($storeId = null): bool
+    {
+        return  (boolean) $this->config->getValue(self::REDIRECT_INVOICE, $storeId);
     }
 }

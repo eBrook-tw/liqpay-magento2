@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Pronko Consulting (https://www.pronkoconsulting.com)
+ * See LICENSE for the license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Pronko\LiqPayRedirect\Controller\Checkout\Form">
+        <arguments>
+            <argument name="logger" xsi:type="object">PronkoLiqPayLogger</argument>
+            <argument name="converter" xsi:type="object">Pronko\LiqPayGateway\Gateway\Converter\ArrayToJson</argument>
+        </arguments>
+    </type>
+</config>
