@@ -180,12 +180,14 @@ class LiqPayCallback implements LiqPayCallbackInterface
                 $order->addStatusHistoryComment(implode(' ', $historyMessage))
                     ->setIsCustomerNotified(true);
             }
-            if ($state) {
-                $order->setState($state);
-                $order->setStatus($state);
-                $order->save();
+            if ($order->getState() == Order::STATE_NEW) {
+                if ($state) {
+                    $order->setState($state);
+                    $order->setStatus($state);
+                    $order->save();
+                }
+                $this->_orderRepository->save($order);
             }
-            $this->_orderRepository->save($order);
         } catch (\Exception $e) {
             $this->logger->debug(['liqpay callback error msg' => $e->getMessage()]);
         }
@@ -198,19 +200,7 @@ class LiqPayCallback implements LiqPayCallbackInterface
      */
     protected function getOrderById($orderId): Order
     {
-        $orderPrefix = $this->config->getOrderPrefix();
-        $orderSuffix = $this->config->getOrderSuffix();
-        if (!empty($orderPrefix)) {
-            if (strlen($orderPrefix) < strlen($orderId) && substr($orderId, 0, strlen($orderPrefix)) == $orderPrefix) {
-                $orderId = substr($orderId, strlen($orderPrefix));
-            }
-        }
-        if (!empty($orderSuffix)) {
-            if (strlen($orderSuffix) < strlen($orderId) && substr($orderId, -strlen($orderSuffix)) == $orderSuffix) {
-                $orderId = substr($orderId, 0, strlen($orderId) - strlen($orderSuffix));
-            }
-        }
-
+        $orderId = $this->liqPayServer->getOrderId($orderId);
         return $this->_order->loadByIncrementId($orderId);
     }
 }

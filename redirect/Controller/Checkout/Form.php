@@ -76,6 +76,11 @@ class Form extends Action
                 throw new \Exception(__('Order not found'));
             }
             if ($this->liqPayServer->checkOrderIsLiqPayPayment($order)) {
+                // set quote is not active
+                if ($this->getCheckoutSession()->getQuote()->getId() == $order->getQuoteId() && $this->getCheckoutSession()->getQuote()->getIsActive()) {
+                    $this->getCheckoutSession()->getQuote()->setIsActive(false)->save();
+                }
+
                 $formBlock = $this->_view->getLayout()->createBlock('Pronko\LiqPayRedirect\Block\SubmitForm');
                 $formBlock->setOrder($order);
                 $data = [

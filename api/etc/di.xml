@@ -7,6 +7,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Pronko\LiqPayApi\Api\LiqPayCallbackInterface" type="Pronko\LiqPayApi\Model\LiqPayCallback"/>
+    <preference for="Pronko\LiqPayApi\Api\LiqPayCheckPaymentInterface" type="Pronko\LiqPayApi\Model\LiqPayCheckPayment"/>
     <type name="Pronko\LiqPayApi\Model\LiqPayCallback">
         <arguments>
             <argument name="logger" xsi:type="object">PronkoLiqPayLogger</argument>

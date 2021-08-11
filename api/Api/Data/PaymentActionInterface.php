@@ -9,6 +9,7 @@ namespace Pronko\LiqPayApi\Api\Data;
  */
 interface PaymentActionInterface
 {
+    const STATUS = 'status';
     const PAY = 'pay';
     const AUTHORIZE = 'authorize';
     const AUTHORIZE_CAPTURE = 'authorize_capture';

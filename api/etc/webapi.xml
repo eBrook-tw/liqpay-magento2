@@ -15,4 +15,10 @@
             <resource ref="anonymous"/>
         </resources>
     </route>
+    <route url="/V1/liqpay/check/:order_id" method="GET">
+        <service class="Pronko\LiqPayApi\Api\LiqPayCheckPaymentInterface" method="check"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
 </routes>

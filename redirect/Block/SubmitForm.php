@@ -15,7 +15,6 @@ use Magento\Sales\Model\Order;
 use Pronko\LiqPayApi\Api\Data\PaymentActionInterface;
 use Pronko\LiqPayGateway\Gateway\Config;
 use Pronko\LiqPayRedirect\Model\LiqPayServer;
-use Pronko\LiqPaySdk\Api\VersionInterface;
 
 class SubmitForm extends Template
 {
@@ -78,7 +77,7 @@ class SubmitForm extends Template
 
         $html = $this->liqPayServer->cnbForm([
             'action' => PaymentActionInterface::PAY,
-            'version' => VersionInterface::VERSION,
+            'version' => $this->liqPayServer->getVersion(),
             'amount' => $order->getGrandTotal(),
             'currency' => $order->getOrderCurrencyCode(),
             'description' => $this->liqPayServer->getLiqPayDescription($order),

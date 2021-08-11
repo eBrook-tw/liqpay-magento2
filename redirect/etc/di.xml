@@ -12,4 +12,10 @@
             <argument name="converter" xsi:type="object">Pronko\LiqPayGateway\Gateway\Converter\ArrayToJson</argument>
         </arguments>
     </type>
+    <type name="Pronko\LiqPayRedirect\Model\LiqPayServer">
+        <arguments>
+            <argument name="logger" xsi:type="object">PronkoLiqPayLogger</argument>
+            <argument name="converter" xsi:type="object">Pronko\LiqPayGateway\Gateway\Converter\ArrayToJson</argument>
+        </arguments>
+    </type>
 </config>

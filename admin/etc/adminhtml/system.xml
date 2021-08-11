@@ -81,7 +81,7 @@
                             <config_path>payment/pronko_liqpay/order_description</config_path>
                         </field>
                     </group>
-                    <group id="pronko_liqpay_advanced_settings" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="6">
+                    <group id="pronko_liqpay_redirect_settings" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="6">
                         <label>Redirect</label>
                         <attribute type="expanded">0</attribute>
                         <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
