@@ -2,10 +2,8 @@
 
 namespace Pronko\LiqPayApi\Model;
 
-use Magento\Framework\App\RequestInterface;
 use Magento\Framework\DB\Transaction;
 use Magento\Payment\Model\Method\Logger;
-use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Service\InvoiceService;
 use Pronko\LiqPayApi\Api\LiqPayCheckPaymentInterface;
@@ -20,11 +18,6 @@ class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
     protected $_order;
 
     /**
-     * @var \Magento\Sales\Api\OrderRepositoryInterface
-     */
-    protected $_orderRepository;
-
-    /**
      * @var \Magento\Sales\Model\Service\InvoiceService
      */
     protected $_invoiceService;
@@ -33,11 +26,6 @@ class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
      * @var \Magento\Framework\DB\Transaction
      */
     protected $_transaction;
-
-    /**
-     * @var RequestInterface
-     */
-    protected $_request;
 
     private Config $config;
 
@@ -49,19 +37,15 @@ class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
 
     public function __construct(
         Order $order,
-        OrderRepositoryInterface $orderRepository,
         InvoiceService $invoiceService,
         Transaction $transaction,
         Logger $logger,
         Config $config,
-        RequestInterface $request,
         LiqPayServer $liqPayServer
     ) {
         $this->_order = $order;
-        $this->_orderRepository = $orderRepository;
         $this->_invoiceService = $invoiceService;
         $this->_transaction = $transaction;
-        $this->_request = $request;
         $this->logger = $logger;
         $this->config = $config;
         $this->liqPayServer = $liqPayServer;
@@ -80,6 +64,18 @@ class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
                     throw new \Exception('Order is not exist!');
                 }
                 if ($order->getState() == Order::STATE_NEW && $order->getStatus() == 'pending') {
+                    if ($this->config->isCreateInvoice($order->getStoreId())) {
+                        if ($order->canInvoice()) {
+                            $invoice = $this->_invoiceService->prepareInvoice($order);
+                            $invoice->register()->pay();
+                            $transactionSave = $this->_transaction->addObject(
+                                $invoice
+                            )->addObject(
+                                $invoice->getOrder()
+                            );
+                            $transactionSave->save();
+                        }
+                    }
                     $order->addStatusHistoryComment(__('Liqpay payment success.'))
                         ->setIsCustomerNotified(true);
                     $state = Order::STATE_PROCESSING;
