@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Pronko\LiqPayGateway\Gateway\Validator;
 
 use Magento\Payment\Gateway\Validator\AbstractValidator;
+use Pronko\LiqPayApi\Api\Data\PaymentActionInterface;
 
 /**
  * Class GeneralResponseValidator
@@ -53,7 +54,7 @@ class RefundResponseValidator extends AbstractValidator
         return [
             function ($response) {
                 return [
-                    isset($response['action']),
+                    !isset($response['action']) || (isset($response['action']) && $response['action'] == PaymentActionInterface::REFUND),
                     [__('LiqPay Action is missing in the response')]
                 ];
             },
@@ -65,7 +66,7 @@ class RefundResponseValidator extends AbstractValidator
             },
             function ($response) {
                 return [
-                    isset($response['status']) && in_array($response['status'], ['success', 'reserved']),
+                    isset($response['status']) && in_array($response['status'], ['success', 'reversed']),
                     [__('LiqPay server returned an error in the response')]
                 ];
             },

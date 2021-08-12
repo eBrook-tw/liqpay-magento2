@@ -12,8 +12,8 @@ use Pronko\LiqPayGateway\Gateway\Config;
 use Pronko\LiqPayGateway\Gateway\Request\Encoder;
 use Pronko\LiqPayGateway\Gateway\Request\SignatureFactory;
 use Pronko\LiqPayGateway\Gateway\Validator\CurrencyValidator;
+use Pronko\LiqPaySdk\Api\ApiUrlInterface;
 use Pronko\LiqPaySdk\Api\CheckoutRedirectUrlInterface;
-use Pronko\LiqPaySdk\Api\CheckPaymentUrlInterface;
 use Pronko\LiqPaySdk\Api\VersionInterface;
 
 class LiqPayServer
@@ -241,7 +241,7 @@ class LiqPayServer
      */
     public function getCheckUrl(): string
     {
-        return CheckPaymentUrlInterface::CHECK_URL;
+        return ApiUrlInterface::API_URL . ApiUrlInterface::REQUEST_ENDPOINT_PATH;
     }
 
     /**

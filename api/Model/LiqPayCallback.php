@@ -15,6 +15,8 @@ use Magento\Framework\DB\Transaction;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment\Repository;
+use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
 use Magento\Sales\Model\Service\InvoiceService;
 use Pronko\LiqPayApi\Api\LiqPayCallbackInterface;
 use Pronko\LiqPayGateway\Gateway\Config;
@@ -54,12 +56,27 @@ class LiqPayCallback implements LiqPayCallbackInterface
      * @var LiqPayServer
      */
     private LiqPayServer $liqPayServer;
+    /**
+     * @var BuilderInterface
+     */
+    protected BuilderInterface $_transactionBuilder;
+    /**
+     * @var Repository
+     */
+    protected Repository $_paymentRepository;
+    /**
+     * @var Order\Payment\Transaction\Repository
+     */
+    protected Order\Payment\Transaction\Repository $_transactionRepository;
 
     public function __construct(
         Order $order,
         OrderRepositoryInterface $orderRepository,
         InvoiceService $invoiceService,
         Transaction $transaction,
+        BuilderInterface $transactionBuilder,
+        Repository $paymentRepository,
+        Order\Payment\Transaction\Repository $transactionRepository,
         Logger $logger,
         Config $config,
         RequestInterface $request,
@@ -73,6 +90,9 @@ class LiqPayCallback implements LiqPayCallbackInterface
         $this->logger = $logger;
         $this->config = $config;
         $this->liqPayServer = $liqPayServer;
+        $this->_transactionBuilder = $transactionBuilder;
+        $this->_paymentRepository = $paymentRepository;
+        $this->_transactionRepository = $transactionRepository;
     }
 
     public function callback()
@@ -180,6 +200,11 @@ class LiqPayCallback implements LiqPayCallbackInterface
                 $order->addStatusHistoryComment(implode(' ', $historyMessage))
                     ->setIsCustomerNotified(true);
             }
+
+            // Transaction Id
+            $payment = $order->getPayment();
+            $this->_createTransaction($order, $decodedData, $payment);
+
             if ($order->getState() == Order::STATE_NEW) {
                 if ($state) {
                     $order->setState($state);
@@ -202,5 +227,42 @@ class LiqPayCallback implements LiqPayCallbackInterface
     {
         $orderId = $this->liqPayServer->getOrderId($orderId);
         return $this->_order->loadByIncrementId($orderId);
+    }
+
+    /**
+     * @param null|Order $order
+     * @param array $paymentData
+     * @param null $payment
+     */
+    protected function _createTransaction($order = null, $paymentData = [], $payment = null)
+    {
+        $transactionId = $paymentData['transaction_id'] ?? '';
+        if (!$transactionId) {
+            return;
+        }
+
+        try {
+            $payment->setLastTransId($transactionId);
+            $payment->setTransactionId($transactionId);
+            $payment->setAdditionalInformation($paymentData);
+
+            //get the object of builder class
+            $trans = $this->_transactionBuilder;
+            $transaction = $trans->setPayment($payment)
+                ->setOrder($order)
+                ->setTransactionId($transactionId)
+                ->setFailSafe(true)
+                ->build(Order\Payment\Transaction::TYPE_CAPTURE);
+
+            $payment->setParentTransactionId(null);
+            $this->_paymentRepository->save($payment);
+
+            $transaction = $this->_transactionRepository->save($transaction);
+
+            return $transaction->getTransactionId();
+        } catch (\Exception $e) {
+            //log errors here
+            $this->logger->debug(["Transaction Exception: There was a problem with creating the transaction. " . $e->getMessage()]);
+        }
     }
 }
