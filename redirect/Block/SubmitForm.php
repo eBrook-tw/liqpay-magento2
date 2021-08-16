@@ -82,6 +82,8 @@ class SubmitForm extends Template
             'currency' => $order->getOrderCurrencyCode(),
             'description' => $this->liqPayServer->getLiqPayDescription($order),
             'order_id' => $this->config->getOrderPrefix() . $order->getIncrementId() . $this->config->getOrderSuffix(),
+            'result_url' => $this->getUrl('liqpay/checkout/result', ['order_id' => $order->getIncrementId()]),
+            'server_url' => $this->getUrl('liqpay/checkout/result'),
         ]);
         return $html;
     }

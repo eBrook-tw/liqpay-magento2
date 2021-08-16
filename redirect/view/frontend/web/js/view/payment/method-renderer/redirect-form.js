@@ -55,7 +55,7 @@ define([
                     if (data.content) {
                         var html = '<div id="liqPaySubmitFrom" style="display: none;">' + data.content + '</div>';
                         $('body').append(html);
-                        window.open('about:blank','POPUPW','width=900,height=700,scrollbars=yes,resizable=yes');
+                        // window.open('about:blank','POPUPW','width=900,height=700,scrollbars=yes,resizable=yes');
                         $('#liqPaySubmitFrom form:first').submit();
                     }
                 } else {
