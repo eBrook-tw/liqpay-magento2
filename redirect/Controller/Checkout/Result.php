@@ -50,21 +50,23 @@ class Result extends Action
         $order = $this->_order->loadByIncrementId($orderId);
 
         if ($order && $order->getId()) {
+            // check status
             if ($order->getState() == Order::STATE_PROCESSING) {
                 $this->_redirect('checkout/onepage/success');
                 return;
             }
 
+            // check payment status by api
             if ($this->payCheckPayment->check($orderId)) {
                 $this->_redirect('checkout/onepage/success');
                 return;
             }
             $this->checkoutSession->clearQuote();
-            $this->messageManager->addErrorMessage('The order payment failed or you have already paid, please check later.');
+            $this->messageManager->addErrorMessage(__('The order payment failed or you have already paid, please check later.'));
             $this->_redirect('checkout/onepage/failure');
             return;
         }
-        $this->messageManager->addErrorMessage('The order payment failed or order information error.');
+        $this->messageManager->addErrorMessage(__('The order payment failed or order information error.'));
         $this->_redirect('checkout/cart');
         return;
     }
