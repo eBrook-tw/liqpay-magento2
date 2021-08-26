@@ -17,7 +17,7 @@ interface LiqPayCheckPaymentInterface
      *
      * @api
      *
-     * @param mixed $orderId
+     * @param int|string|null $orderId
      * @return boolean
      */
     public function check($orderId);
