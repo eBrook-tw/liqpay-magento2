@@ -61,7 +61,7 @@ class Result extends Action
                 $this->_redirect('checkout/onepage/success');
                 return;
             }
-            $this->checkoutSession->clearQuote();
+            // $this->checkoutSession->clearQuote();
             $this->messageManager->addErrorMessage(__('The order payment failed or you have already paid, please check later.'));
             $this->_redirect('checkout/onepage/failure');
             return;
