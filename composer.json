@@ -33,7 +33,7 @@
     ]
   },
   "type": "magento2-metapackage",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "minimum-stability": "stable",
   "authors": [
     {
