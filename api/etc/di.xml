@@ -20,4 +20,7 @@
             <argument name="converter" xsi:type="object">Pronko\LiqPayGateway\Gateway\Converter\ArrayToJson</argument>
         </arguments>
     </type>
+    <type name="Magento\Sales\Model\Order\Email\Sender\OrderSender">
+        <plugin name="order_sender" type="Pronko\LiqPayApi\Plugin\Email\Sender\OrderSender" sortOrder="1"/>
+    </type>
 </config>

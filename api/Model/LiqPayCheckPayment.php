@@ -11,6 +11,7 @@ use Magento\Sales\Model\Service\InvoiceService;
 use Pronko\LiqPayApi\Api\LiqPayCheckPaymentInterface;
 use Pronko\LiqPayGateway\Gateway\Config;
 use Pronko\LiqPayRedirect\Model\LiqPayServer;
+use Magento\Sales\Model\OrderNotifier;
 
 class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
 {
@@ -48,6 +49,10 @@ class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
      * @var Order\Payment\Transaction\Repository
      */
     protected Order\Payment\Transaction\Repository $_transactionRepository;
+    /**
+    * @var OrderNotifier
+    **/
+    protected $orderNotifier;
 
     public function __construct(
         Order $order,
@@ -58,7 +63,8 @@ class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
         Order\Payment\Transaction\Repository $transactionRepository,
         Logger $logger,
         Config $config,
-        LiqPayServer $liqPayServer
+        LiqPayServer $liqPayServer,
+        OrderNotifier $orderNotifier
     )
     {
         $this->_order = $order;
@@ -70,6 +76,7 @@ class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
         $this->_transactionBuilder = $transactionBuilder;
         $this->_paymentRepository = $paymentRepository;
         $this->_transactionRepository = $transactionRepository;
+        $this->orderNotifier = $orderNotifier;
     }
 
     public function check($orderId)
@@ -107,6 +114,7 @@ class LiqPayCheckPayment implements LiqPayCheckPaymentInterface
                     $order->setState($state);
                     $order->setStatus($state);
                     $order->save();
+                    $this->orderNotifier->notify($order);
                 }
                 return true;
             } catch (\Exception $e) {
