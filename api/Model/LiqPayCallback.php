@@ -21,6 +21,7 @@ use Magento\Sales\Model\Service\InvoiceService;
 use Pronko\LiqPayApi\Api\LiqPayCallbackInterface;
 use Pronko\LiqPayGateway\Gateway\Config;
 use Pronko\LiqPayRedirect\Model\LiqPayServer;
+use Magento\Sales\Model\OrderNotifier;
 
 class LiqPayCallback implements LiqPayCallbackInterface
 {
@@ -69,6 +70,11 @@ class LiqPayCallback implements LiqPayCallbackInterface
      */
     protected Order\Payment\Transaction\Repository $_transactionRepository;
 
+    /**
+    * @var OrderNotifier
+    **/
+    protected $orderNotifier;
+
     public function __construct(
         Order $order,
         OrderRepositoryInterface $orderRepository,
@@ -80,7 +86,8 @@ class LiqPayCallback implements LiqPayCallbackInterface
         Logger $logger,
         Config $config,
         RequestInterface $request,
-        LiqPayServer $liqPayServer
+        LiqPayServer $liqPayServer,
+        OrderNotifier $orderNotifier
     ) {
         $this->_order = $order;
         $this->_orderRepository = $orderRepository;
@@ -93,6 +100,7 @@ class LiqPayCallback implements LiqPayCallbackInterface
         $this->_transactionBuilder = $transactionBuilder;
         $this->_paymentRepository = $paymentRepository;
         $this->_transactionRepository = $transactionRepository;
+        $this->orderNotifier = $orderNotifier;
     }
 
     public function callback()
@@ -212,6 +220,9 @@ class LiqPayCallback implements LiqPayCallbackInterface
                     $order->save();
                 }
                 $this->_orderRepository->save($order);
+                if ($order->getStatus == Order::STATE_PROCESSING) {
+                    $this->orderNotifier->notify($order);
+                }
             }
         } catch (\Exception $e) {
             $this->logger->debug(['liqpay callback error msg' => $e->getMessage()]);
