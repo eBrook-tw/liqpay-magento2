@@ -176,7 +176,7 @@ class LiqPayServer
         $result = curl_exec($ch);
         $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        $this->logger->debug(['url' => $url, 'responseCode' => $responseCode, 'result' => $result]);
+        $this->logger->debug(['url' => $url,'orderId' => $params['order_id'], 'responseCode' => $responseCode, 'result' => $result]);
         return json_decode($result, true);
     }
 
